@@ -1,0 +1,108 @@
+/* PAGE */
+.approve-container {
+  padding: 20px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+/* TABLE */
+.approve-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.approve-table thead {
+  background: linear-gradient(to right, #1e3a8a, #3b82f6);
+  color: white;
+}
+
+.approve-table th {
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* ROWS */
+.approve-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.approve-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+/* IMAGE */
+.approve-table img {
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+/* BADGES */
+.badge22 {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.badge22.lost {
+  background: #fee2e2;
+  color: red;
+}
+
+.badge22.found {
+  background: #dcfce7;
+  color: green;
+}
+
+/* BUTTONS */
+.approve-btn {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+}
+
+.reject-btn {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #f59e0b;
+  color: white;
+  cursor: pointer;
+}
+
+.remove-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background: red;
+  color: white;
+  cursor: pointer;
+}
+
+/* LOADING & ERROR */
+.approve-container p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .approve-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
