@@ -1,0 +1,132 @@
+/* PAGE */
+.manage-users1 {
+  padding: 20px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+/* TITLE */
+.manage-users1 h2 {
+  font-size: 26px;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin-bottom: 15px;
+}
+
+/* USER COUNT */
+.user-count1 {
+  background: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.user-count1 span {
+  color: #1e3a8a;
+  font-weight: bold;
+}
+
+/* SEARCH BOX */
+.search-box1 {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.search-box1 input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px 0 0 6px;
+}
+
+.search-box1 button {
+  padding: 10px 16px;
+  border: none;
+  background: #1e3a8a;
+  color: white;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+}
+
+/* TABLE */
+.users-table1 {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.users-table1 thead {
+  background: linear-gradient(to right, #1e3a8a, #3b82f6);
+  color: white;
+}
+
+.users-table1 th {
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* ROWS */
+.users-table1 td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.users-table1 tbody tr:hover {
+  background: #f1f5f9;
+}
+
+/* STATUS */
+.active1 {
+  color: green;
+  font-weight: bold;
+}
+
+.inactive1 {
+  color: red;
+  font-weight: bold;
+}
+
+/* BUTTONS */
+.toggle1-btn {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+
+.delete1-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background: red;
+  color: white;
+  cursor: pointer;
+}
+
+/* DARK BUTTON */
+.dark-btn {
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .users-table1 {
+    display: block;
+    overflow-x: auto;
+  }
+}

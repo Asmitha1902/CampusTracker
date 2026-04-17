@@ -1,0 +1,348 @@
+/* ================= GLOBAL RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #020617, #0b1b3b);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ================= HOME CONTAINER ================= */
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ================= NAVBAR ================= */
+.custom-navbar {
+  background: #ffffff;
+  padding: 18px 60px;
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7C3AED, #9333EA);
+  font-size: 20px;
+  color: #fff;
+}
+
+.brand-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: #6D28D9;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+/* ================= BUTTONS ================= */
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+.btn.login-btn,
+.btn.sign-in-btn,
+.btn.get-started-btn
+ {
+  color: white;
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+}
+
+.btn.create-btn{
+ margin-left: 20px;
+  color: white;
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+}
+.create-btn:hover,
+.login-btn:hover,
+.sign-in-btn:hover,
+.get-started-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+}
+
+/* ================= HERO ================= */
+.hero-section {
+  text-align: center;
+  padding: 120px 20px 100px;
+}
+
+.badge-text {
+  display: inline-block;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #EDE9FE;
+  color: #6D28D9;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+/* ⭐ BIG ANIMATED TITLE */
+/* ⭐ BIG ANIMATED TITLE */
+.hero-title.mb-3 {
+  font-size: 60px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  color: white;
+}
+
+.hero-title.mb-3 span {
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6); /* blue → purple → pink */
+  background-size: 200% auto; /* for animation movement */
+  -webkit-background-clip: text; /* gradient text */
+  -webkit-text-fill-color: transparent; /* make text itself transparent */
+  animation: gradientMove 6s linear infinite; /* infinite gradient movement */
+}
+
+/* Gradient animation keyframes */
+@keyframes gradientMove {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+.hero-subtitle {
+  font-size: 18px;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  color: #94a3b8;
+}
+
+/* Hero Buttons Glass Effect */
+.hero-btn-glass {
+  position: relative;
+  padding: 15px 35px;
+  border-radius: 22px;
+  backdrop-filter: blur(25px);
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  overflow: hidden;
+  display: inline-block;
+  margin: 5px;
+}
+
+.hero-btn-glass:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(124,58,237,0.2);
+}
+
+.hero-btn-glass::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+  transform: skewX(-25deg);
+  transition: 0.8s;
+}
+
+.hero-btn-glass:hover::before {
+  left: 130%;
+}
+
+/* ================= STATS ================= */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 80px;
+}
+
+.stat-card {
+  
+  color: white;
+  padding: 35px 25px;
+  border-radius: 18px;
+  text-align: center;
+  transition: 0.3s ease;
+  
+  min-width: 150px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+/* Stats colors */
+.stat-card:nth-child(1) .stat-number { color: #6D28D9; }
+.stat-card:nth-child(2) .stat-number { color: #16A34A; }
+.stat-card:nth-child(3) .stat-number { color: #9333EA; }
+.stat-card:nth-child(4) .stat-number { color: #2563EB; }
+
+/* ================= HOW IT WORKS ================= */
+/* Section Styling */
+.how-section {
+  
+  padding: 60px 20px;
+  text-align: center;
+  color: #fff;
+}
+
+/* Titles */
+.how-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.how-subtitle {
+  font-size: 1.2rem;
+  color: #94a3b8;
+  margin-bottom: 40px;
+}
+
+/* Cards container spacing using flex */
+.row.justify-content-center {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px; /* spacing between cards */
+  justify-content: center;
+}
+
+/* Glass Cards */
+/* Glass Cards with Different Colors */
+.how-card {
+  border-radius: 20px;
+  padding: 30px 20px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  cursor: pointer;
+  color: #fff;
+}
+
+/* Individual card colors using nth-child */
+.how-card:nth-child(1) {
+ background: rgba(54, 162, 235, 0.2); /* blue glass */
+  border-color: rgba(54, 162, 235, 0.3);
+}
+
+.how-card:nth-child(2) {
+  background: rgba(54, 162, 235, 0.2); /* blue glass */
+  border-color: rgba(54, 162, 235, 0.3);
+}
+
+.how-card:nth-child(3) {
+ background: rgba(54, 162, 235, 0.2); /* blue glass */
+  border-color: rgba(54, 162, 235, 0.3);
+}
+/* Hover Effect with stronger color */
+.how-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.how-card:nth-child(1):hover {
+  background: rgba(54, 162, 235, 0.3);
+}
+
+.how-card:nth-child(2):hover {
+  background: rgba(54, 162, 235, 0.3);
+}
+
+.how-card:nth-child(3):hover {
+  background: rgba(54, 162, 235, 0.3);
+}
+
+/* Click Effect */
+.how-card:active {
+  transform: scale(0.95);
+}
+
+/* Step Circle */
+.step-circle {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0 auto 15px;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  transition: background 0.3s, transform 0.2s;
+}
+
+/* Step Circle hover & click color change */
+.step-circle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.step-circle:active {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0.95);
+}
+/* ================= FOOTER ================= */
+.footer-section {
+  padding: 40px 60px;
+  /*background: #ffffff;*/
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6B7280;
+  font-size: 13px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+  .custom-navbar { padding: 16px 25px; }
+  .hero-title { font-size: 48px; }
+  .hero-subtitle { font-size: 16px; }
+}
+
+@media (max-width: 576px) {
+  .hero-title { font-size: 34px; }
+  .hero-subtitle { padding: 0 15px; }
+  .btn, .hero-btn-glass { width: 100%; margin-top: 10px; }
+  .stat-card, .how-card { width: 100%; margin-bottom: 20px; }
+}
