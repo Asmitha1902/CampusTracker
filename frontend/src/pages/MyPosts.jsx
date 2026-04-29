@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MyPosts.css";
 
 const MyPosts = () => {
+  const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -127,6 +129,15 @@ const MyPosts = () => {
 
             {/* ACTION */}
             <div className="actions">
+              {post.itemStatus?.toLowerCase() === "matched" && (
+                <button 
+                  className="chat-btn"
+                  onClick={() => navigate("/chat")}
+                  style={{background: '#4f46e5', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', marginRight: '10px'}}
+                >
+                  Chat
+                </button>
+              )}
               <button 
                 className="delete-btn"
                 onClick={()=>deletePost(post.id)}

@@ -172,13 +172,22 @@ public class ItemService {
             if (myItem == null || myItem.getUser() == null)
                 continue;
 
+            // Skip if the item is already resolved
+            if ("RESOLVED".equalsIgnoreCase(myItem.getItemStatus()))
+                continue;
+
             String myType = myItem.getType() != null
                     ? myItem.getType().trim().toLowerCase()
                     : "";
 
-            // 👉 ONLY LOST
-            if (!myType.contains("lost"))
+            String targetType = "";
+            if (myType.contains("lost")) {
+                targetType = "found";
+            } else if (myType.contains("found")) {
+                targetType = "lost";
+            } else {
                 continue;
+            }
 
             Item bestMatch = null;
             int bestScore = 0;
@@ -193,129 +202,163 @@ public class ItemService {
                 if (myItem.getId().equals(other.getId()))
                     continue;
 
+                // Skip if the other item is already resolved
+                if ("RESOLVED".equalsIgnoreCase(other.getItemStatus()))
+                    continue;
+
                 String otherType = other.getType() != null
                         ? other.getType().trim().toLowerCase()
                         : "";
 
-                // 👉 ONLY FOUND
-                if (!otherType.contains("found"))
+                // 👉 MATCH AGAINST TARGET TYPE
+                if (!otherType.contains(targetType))
                     continue;
 
                 int score = 0;
 
-                // ✅ NAME MATCH
+                // ✅ NAME MATCH (FUZZY MATCHING)
+                int nameMatchPercent = 0;
                 if (myItem.getItemName() != null && other.getItemName() != null) {
-                    String n1 = myItem.getItemName().toLowerCase().replaceAll("\\s+", "");
-                    String n2 = other.getItemName().toLowerCase().replaceAll("\\s+", "");
+                    String n1 = myItem.getItemName().toLowerCase().trim();
+                    String n2 = other.getItemName().toLowerCase().trim();
 
-                    if (n1.equals(n2))
-                        score += 60;
-                    else if (n1.contains(n2) || n2.contains(n1))
-                        score += 40;
-                }
-
-                // ✅ LOCATION MATCH
-                if (myItem.getLocation() != null && other.getLocation() != null) {
-                    if (myItem.getLocation().trim()
-                            .equalsIgnoreCase(other.getLocation().trim())) {
-                        score += 30;
+                    nameMatchPercent = calculateFuzzyMatchPercentage(n1, n2);
+                    if (n1.contains(n2) || n2.contains(n1)) {
+                        nameMatchPercent = Math.max(nameMatchPercent, 80);
                     }
                 }
 
-                // ✅ TAGS MATCH
+                // ✅ LOCATION MATCH
+                int locationMatchPercent = 0;
+                if (myItem.getLocation() != null && other.getLocation() != null) {
+                    if (myItem.getLocation().trim()
+                            .equalsIgnoreCase(other.getLocation().trim())) {
+                        locationMatchPercent = 100;
+                    } else {
+                        locationMatchPercent = calculateFuzzyMatchPercentage(
+                                myItem.getLocation().toLowerCase().trim(),
+                                other.getLocation().toLowerCase().trim());
+                    }
+                }
+
+                // ✅ TAGS MATCH (FUZZY MATCHING)
+                int tagsMatchPercent = 0;
                 if (myItem.getTags() != null && other.getTags() != null) {
                     String[] t1 = myItem.getTags().toLowerCase().split(",");
                     String[] t2 = other.getTags().toLowerCase().split(",");
 
                     for (String a : t1) {
                         for (String b : t2) {
-                            if (!a.trim().isEmpty() &&
-                                    a.trim().equals(b.trim())) {
-                                score += 10;
+                            if (!a.trim().isEmpty() && !b.trim().isEmpty()) {
+                                int tagMatchPercent = calculateFuzzyMatchPercentage(a.trim(), b.trim());
+                                if (tagMatchPercent > tagsMatchPercent) {
+                                    tagsMatchPercent = tagMatchPercent;
+                                }
                             }
                         }
                     }
                 }
+
+                // Weighted Score: 60% Name, 30% Location, 10% Tags
+                score = (int) ((nameMatchPercent * 0.6) + (locationMatchPercent * 0.3) + (tagsMatchPercent * 0.1));
 
                 // 👉 BEST MATCH
                 if (score > bestScore) {
                     bestScore = score;
                     bestMatch = other;
                 }
+
+                // 👉 ADD ALL EVALUATED ITEMS AS POTENTIAL MATCHES
+                // We keep track of the max score achieved by an 'other' item against any of
+                // 'myItems'
+                if (other.getType() != null && other.getType().toLowerCase().contains("found")) {
+                    ItemDTO dto = new ItemDTO(other);
+                    dto.setMatchPercent(score);
+
+                    // Check if it's already in the matches list, if so, update if score is higher
+                    boolean foundInList = false;
+                    for (ItemDTO existing : matches) {
+                        if (existing.getId().equals(other.getId())) {
+                            foundInList = true;
+                            if (score > existing.getMatchPercent()) {
+                                existing.setMatchPercent(score);
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!foundInList) {
+                        matches.add(dto);
+                        shownIds.add(other.getId());
+                    }
+                }
             }
 
             // 🔥 SAVE MATCH + NOTIFICATION
-            if (bestMatch != null && bestScore >= 30) {
+            if (bestMatch != null && bestScore >= 40) {
 
-                myItem.setItemStatus("MATCHED");
-                bestMatch.setItemStatus("MATCHED");
+                if (!"MATCHED".equalsIgnoreCase(myItem.getItemStatus())) {
+                    myItem.setItemStatus("MATCHED");
+                    itemRepo.save(myItem);
+                }
 
-                itemRepo.save(myItem);
-                itemRepo.save(bestMatch);
+                if (!"MATCHED".equalsIgnoreCase(bestMatch.getItemStatus())) {
+                    bestMatch.setItemStatus("MATCHED");
+                    itemRepo.save(bestMatch);
+                }
 
                 // ================= 🔔 NOTIFICATION =================
-                // ================= 🔔 NOTIFICATION =================
-                User myUser = myItem.getUser(); // LOST user
-                User otherUser = bestMatch.getUser(); // FOUND user
+                User myUser = myItem.getUser(); // the user who owns myItem
+                User otherUser = bestMatch.getUser(); // the user who owns bestMatch
 
                 String itemName = myItem.getItemName();
                 String location = myItem.getLocation();
 
-                // 🔥 BETTER MESSAGES
-                String msg1 = "Match found! Someone found your LOST item: " + itemName;
-                String msg2 = "Good news! Someone claimed your FOUND item: " + itemName;
+                String msg1 = "";
+                String msg2 = "";
 
-                // ✅ LOST USER NOTIFICATION
+                if (myType.contains("lost")) {
+                    msg1 = "Match found! Someone found your LOST item: " + itemName;
+                    msg2 = "Good news! Someone claimed your FOUND item: " + bestMatch.getItemName();
+                } else {
+                    msg1 = "Good news! Someone claimed your FOUND item: " + itemName;
+                    msg2 = "Match found! Someone found your LOST item: " + bestMatch.getItemName();
+                }
+
+                // ✅ MY USER NOTIFICATION
                 if (!notificationRepo.existsByUserAndMessage(myUser, msg1)) {
-
                     Notification notification1 = new Notification(
                             myUser,
                             msg1,
-                            "LOST",
+                            myType.toUpperCase(),
                             itemName,
                             location,
-                            otherUser.getFullName() // 👉 who found it
-                    );
-
+                            otherUser.getFullName());
                     notificationRepo.save(notification1);
                 }
 
-                // ✅ FOUND USER NOTIFICATION
+                // ✅ OTHER USER NOTIFICATION
                 if (!notificationRepo.existsByUserAndMessage(otherUser, msg2)) {
-
                     Notification notification2 = new Notification(
                             otherUser,
                             msg2,
-                            "FOUND",
-                            itemName,
-                            location,
-                            myUser.getFullName() // 👉 who claimed it
-                    );
-
+                            targetType.toUpperCase(),
+                            bestMatch.getItemName(),
+                            bestMatch.getLocation(),
+                            myUser.getFullName());
                     notificationRepo.save(notification2);
-                }
-                // ====================================================
-                // ====================================================
-
-                // 👉 RESPONSE ADD
-                if (!shownIds.contains(bestMatch.getId())) {
-                    shownIds.add(bestMatch.getId());
-
-                    ItemDTO dto = new ItemDTO(bestMatch);
-                    dto.setMatchPercent(bestScore);
-
-                    matches.add(dto);
                 }
 
             } else {
-                myItem.setItemStatus("ACTIVE");
-                itemRepo.save(myItem);
+                if ("MATCHED".equalsIgnoreCase(myItem.getItemStatus())) {
+                    myItem.setItemStatus("ACTIVE");
+                    itemRepo.save(myItem);
+                }
             }
         }
 
-        // 🔥 OLD MATCHED ITEMS (NO FAKE 100%)
+        // 🔥 OLD MATCHED ITEMS (SHOW TO ALL USERS)
         for (Item item : allItems) {
-
             if (item.getItemStatus() != null &&
                     item.getItemStatus().equalsIgnoreCase("MATCHED")) {
 
@@ -333,13 +376,54 @@ public class ItemService {
                 ItemDTO dto = new ItemDTO(item);
 
                 // Optional fallback score
-                dto.setMatchPercent(70);
+                dto.setMatchPercent(100);
 
                 matches.add(dto);
             }
         }
 
+        // Sort matches by percentage descending
+        matches.sort((a, b) -> Integer.compare(b.getMatchPercent(), a.getMatchPercent()));
+
         return matches;
+    }
+
+    // ================= FUZZY MATCH ALGORITHM (LEVENSHTEIN) =================
+    private int calculateFuzzyMatchPercentage(String s1, String s2) {
+        if (s1 == null || s2 == null)
+            return 0;
+        if (s1.equals(s2))
+            return 100;
+
+        int[] costs = new int[s2.length() + 1];
+        for (int i = 0; i <= s1.length(); i++) {
+            int lastValue = i;
+            for (int j = 0; j <= s2.length(); j++) {
+                if (i == 0) {
+                    costs[j] = j;
+                } else {
+                    if (j > 0) {
+                        int newValue = costs[j - 1];
+                        if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
+                            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                        }
+                        costs[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0) {
+                costs[s2.length()] = lastValue;
+            }
+        }
+
+        int distance = costs[s2.length()];
+        int maxLength = Math.max(s1.length(), s2.length());
+
+        if (maxLength == 0)
+            return 100;
+
+        return (int) (((double) (maxLength - distance) / maxLength) * 100);
     }
 
     public ReportDTO getReportData() {

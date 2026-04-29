@@ -229,7 +229,9 @@ const matchedPosts = posts.filter(
       <div className="activity-card" key={item.id}>
 
         <div className="card-header">
-          <span className="badge found">FOUND</span>
+          <span className={`badge ${item.type?.toLowerCase() === "lost" ? "lost" : "found"}`}>
+            {item.type ? item.type.toUpperCase() : "UNKNOWN"}
+          </span>
 
           {/* ✅ dynamic status */}
           <span className={`status ${item.itemStatus?.toLowerCase()}`}>
@@ -270,15 +272,7 @@ const matchedPosts = posts.filter(
           </div>
         </div>
 
-        {/* ✅ progress bar */}
-        <div className="progress-bar">
-          <div
-            className="progress"
-            style={{ width: `${item.matchPercent || 0}%` }}
-          />
-        </div>
 
-        <p>{item.matchPercent || 0}% match</p>
 
       </div>
     ))
