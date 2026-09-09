@@ -74,7 +74,7 @@ CREATE DATABASE campus_track;
 3. Update DB config in `application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/campus_track
+spring.datasource.url=jdbc:mysql://
 spring.datasource.username=root
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
